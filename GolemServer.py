@@ -20,6 +20,7 @@ LM_STUDIO_API_URL = "http://localhost:1234/v1/embeddings"
 VECTOR_FILE = "golem_vectors.npy"
 JSON_FILE = "golem_cortex.json"
 UMAP_FILE = "golem_umap_model.pkl"
+BM25_FILE = "golem_bm25_index.pkl"
 
 # UPDATED: Matches your new repo filename
 HTML_FILE = "index.html" 
@@ -74,12 +75,20 @@ print("   ↳ Loading Cortex Data...")
 with open(os.path.join(BASE_DIR, JSON_FILE), 'r') as f:
     cortex_data = json.load(f)
 
-# Build BM25 index
-print("   ↳ Building BM25 Index...")
-nltk.download('punkt', quiet=True)
-corpus = [node['text'] for node in cortex_data]
-tokenized_corpus = [word_tokenize(doc.lower()) for doc in corpus]
-bm25_index = BM25Okapi(tokenized_corpus)
+# Load BM25 index (pre-built by ingest.py)
+print("   ↳ Loading BM25 Index...")
+bm25_index = None
+bm25_path = os.path.join(BASE_DIR, BM25_FILE)
+if os.path.exists(bm25_path):
+    with open(bm25_path, 'rb') as f:
+        bm25_index = pickle.load(f)
+    print("   ↳ ✓ BM25 index loaded")
+else:
+    print("   ⚠ BM25 index not found - building from scratch (slower)...")
+    nltk.download('punkt', quiet=True)
+    corpus = [node['text'] for node in cortex_data]
+    tokenized_corpus = [word_tokenize(doc.lower()) for doc in corpus]
+    bm25_index = BM25Okapi(tokenized_corpus)
 
 # Load Cross-Encoder for re-ranking
 print("   ↳ Loading Cross-Encoder Model...")
