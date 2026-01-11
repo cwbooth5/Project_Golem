@@ -1,18 +1,18 @@
 import lancedb
 import wikipediaapi
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from sentence_transformers import SentenceTransformer
 import umap
 from sklearn.neighbors import NearestNeighbors
 import json
-import torch
 import numpy as np
+import requests
 
 # --- CONFIG ---
 DB_PATH = "./my_lancedb"
 TABLE_NAME = "golem_memories"
 JSON_OUTPUT_PATH = "./golem_cortex.json"
-EMBEDDING_MODEL_ID = "google/embeddinggemma-300m"
+EMBEDDING_MODEL_ID = "text-embedding-nomic-embed-text-v1.5"
+LM_STUDIO_API_URL = "http://localhost:1234/v1/embeddings"
 
 # 20 DISTINCT DOMAINS FOR HIGH DENSITY
 # We map them to 5 core color groups for visual clarity
@@ -37,13 +37,33 @@ TARGETS = {
     "Basketball": "Misc", "Chess": "Misc", "Music theory": "Misc", "Game theory": "Misc"
 }
 
+def get_embeddings(texts):
+    """Get embeddings from LM Studio API."""
+    response = requests.post(
+        LM_STUDIO_API_URL,
+        json={
+            "model": EMBEDDING_MODEL_ID,
+            "input": texts
+        }
+    )
+    response.raise_for_status()
+    data = response.json()
+    # Sort by index to ensure correct order
+    embeddings = sorted(data['data'], key=lambda x: x['index'])
+    return np.array([item['embedding'] for item in embeddings])
+
 def ingest_dense():
     print(f"🧠 INITIALIZING DENSE CORTEX BUILDER (20 CATEGORIES)...")
-    
-    # 1. Load Model
-    device = "mps" if torch.backends.mps.is_available() else "cpu"
-    print(f"   ↳ Accelerator: {device.upper()}")
-    encoder = SentenceTransformer(EMBEDDING_MODEL_ID, device=device, trust_remote_code=True)
+
+    # 1. Verify LM Studio Connection
+    print(f"   ↳ Connecting to LM Studio at {LM_STUDIO_API_URL}...")
+    try:
+        test_response = requests.get("http://localhost:1234/v1/models")
+        test_response.raise_for_status()
+        print(f"   ↳ ✓ Connected to LM Studio")
+    except requests.exceptions.RequestException as e:
+        print(f"   ✗ Failed to connect to LM Studio. Make sure it's running on port 1234.")
+        raise e
 
     # 2. Harvest
     wiki = wikipediaapi.Wikipedia(user_agent='ProjectGolem/5.0', language='en', extract_format=wikipediaapi.ExtractFormat.WIKI)
@@ -75,7 +95,7 @@ def ingest_dense():
                     count += 1
 
     print(f"\n📦 Acquired {len(docs)} nodes. Vectorizing...")
-    vectors = encoder.encode(raw_texts, show_progress_bar=True)
+    vectors = get_embeddings(raw_texts)
 
     # 3. 3D Projection (UMAP)
     print("   ↳ Calculating 3D Manifold...")
