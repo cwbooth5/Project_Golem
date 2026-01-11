@@ -553,9 +553,16 @@
 
         // --- SELECTED NODE MARKER ---
         let selectedMarker = null;
+        let selectedMarkerAnimationId = null;
 
         function renderSelectedMarker(nodeIdx) {
             if (selectedMarker) scene.remove(selectedMarker);
+
+            // Cancel previous animation loop to prevent stacking
+            if (selectedMarkerAnimationId !== null) {
+                cancelAnimationFrame(selectedMarkerAnimationId);
+                selectedMarkerAnimationId = null;
+            }
 
             // Store the node index for toggling visibility
             lastSelectedNodeIdx = nodeIdx;
@@ -584,12 +591,16 @@
                 if (!selectedMarker) return;
                 selectedMarker.rotation.x += 0.003;
                 selectedMarker.rotation.y += 0.005;
-                requestAnimationFrame(animateRotation);
+                selectedMarkerAnimationId = requestAnimationFrame(animateRotation);
             };
             animateRotation();
         }
 
         function clearSelectedMarker() {
+            if (selectedMarkerAnimationId !== null) {
+                cancelAnimationFrame(selectedMarkerAnimationId);
+                selectedMarkerAnimationId = null;
+            }
             if (selectedMarker) {
                 scene.remove(selectedMarker);
                 selectedMarker = null;
@@ -614,9 +625,15 @@
 
         function setSelectedMarkerVisibility(visible) {
             selectedMarkerVisible = visible;
-            if (!visible && selectedMarker) {
-                scene.remove(selectedMarker);
-                selectedMarker = null;
+            if (!visible) {
+                if (selectedMarkerAnimationId !== null) {
+                    cancelAnimationFrame(selectedMarkerAnimationId);
+                    selectedMarkerAnimationId = null;
+                }
+                if (selectedMarker) {
+                    scene.remove(selectedMarker);
+                    selectedMarker = null;
+                }
             } else if (visible && lastSelectedNodeIdx !== null && !selectedMarker) {
                 renderSelectedMarker(lastSelectedNodeIdx);
             }
