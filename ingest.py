@@ -6,6 +6,7 @@ from sklearn.neighbors import NearestNeighbors
 import json
 import numpy as np
 import requests
+import pickle
 
 # --- CONFIG ---
 DB_PATH = "./my_lancedb"
@@ -116,6 +117,7 @@ def ingest_dense():
         cortex_data.append({
             "id": i,
             "title": docs[i]['title'],
+            "text": docs[i]['text'],
             "cat": docs[i]['cat'],
             "pos": embeddings_3d[i].tolist(),
             "col": colors[i],
@@ -131,9 +133,13 @@ def ingest_dense():
 
     with open(JSON_OUTPUT_PATH, 'w') as f:
         json.dump(cortex_data, f)
-    
+
     # Save vectors to disk for the active server to load quickly without re-embedding everything
     np.save("golem_vectors.npy", vectors)
+
+    # Save UMAP model for query projection into 3D space
+    with open("golem_umap_model.pkl", 'wb') as f:
+        pickle.dump(reducer, f)
 
     print("✅ DENSE CORTEX GENERATED.")
 

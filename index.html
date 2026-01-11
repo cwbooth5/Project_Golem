@@ -27,6 +27,21 @@
         #log { margin-top: 15px; font-size: 11px; color: #facc15; line-height: 1.4; }
         #status { font-size: 10px; color: #64748b; margin-top: 5px; }
 
+        #results-list {
+            margin-top: 15px; font-size: 10px; max-height: 300px; overflow-y: auto;
+            border: 1px solid #4ade80; padding: 10px; background: rgba(74, 222, 128, 0.02);
+            display: none; pointer-events: auto;
+        }
+        #results-list.active { display: block; }
+        .result-item {
+            padding: 5px 0; border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+            color: #4ade80; cursor: pointer; transition: 0.15s;
+        }
+        .result-item:hover { color: #fff; text-decoration: underline; }
+        .result-score {
+            color: #64748b; font-size: 9px; margin-left: 5px;
+        }
+
         /* --- NEW: DATA LEGEND --- */
         #legend-container {
             position: absolute;
@@ -65,6 +80,119 @@
             border-radius: 50%;
             box-shadow: 0 0 5px currentColor; /* Glowing effect */
         }
+
+        /* --- CONTROLS --- */
+        .controls-row {
+            display: flex; gap: 10px; margin-top: 10px; font-size: 11px;
+        }
+        select {
+            background: rgba(0,0,0,0.6); border: 1px solid #4ade80;
+            color: #4ade80; padding: 5px; font-family: 'Courier New', monospace;
+            font-size: 11px; outline: none;
+        }
+        label {
+            display: flex; align-items: center; gap: 5px; color: #4ade80; cursor: pointer;
+        }
+        input[type="checkbox"] {
+            cursor: pointer;
+        }
+        button {
+            background: rgba(0,0,0,0.6); border: 1px solid #4ade80;
+            color: #4ade80; padding: 8px 12px; font-family: 'Courier New', monospace;
+            font-size: 11px; outline: none; cursor: pointer; transition: 0.2s;
+        }
+        button:hover {
+            background: rgba(74, 222, 128, 0.2); box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+        }
+        input[type="range"] {
+            width: 100px; height: 4px; background: rgba(74, 222, 128, 0.3);
+            border: none; border-radius: 2px; outline: none; cursor: pointer;
+            accent-color: #4ade80;
+        }
+        input[type="range"]:hover {
+            background: rgba(74, 222, 128, 0.5);
+        }
+        .spin-control {
+            display: flex; align-items: center; gap: 8px; font-size: 11px; color: #4ade80;
+        }
+        .spin-value {
+            min-width: 30px; text-align: right;
+        }
+
+        /* --- INSPECTOR PANEL --- */
+        #inspect-panel {
+            position: absolute; top: 100px; right: 20px; width: 320px;
+            background: rgba(0,0,0,0.9); border: 1px solid #4ade80; padding: 15px;
+            color: #4ade80; font-size: 11px; z-index: 20; pointer-events: auto;
+            max-height: 60vh; overflow-y: auto; display: none;
+        }
+        #inspect-panel h3 {
+            margin: 0 0 10px 0; font-size: 12px; color: #7ee787;
+        }
+        #inspect-panel hr {
+            border: none; border-top: 1px solid #4ade80; margin: 8px 0;
+        }
+        .neighbor-item {
+            padding: 5px; margin: 3px 0; background: rgba(74, 222, 128, 0.05);
+            border-left: 2px solid #4ade80; cursor: pointer;
+        }
+        .neighbor-item:hover {
+            background: rgba(74, 222, 128, 0.15);
+        }
+
+        /* --- REFERENCE MODAL --- */
+        #ref-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center;
+            z-index: 100; pointer-events: auto;
+        }
+        #ref-modal.active {
+            display: flex;
+        }
+        .ref-modal-content {
+            background: rgba(0, 0, 0, 0.95); border: 2px solid #4ade80; padding: 20px;
+            max-width: 600px; max-height: 70vh; overflow-y: auto; color: #4ade80; font-size: 11px;
+            border-radius: 4px;
+        }
+        .ref-modal-content h2 {
+            margin: 0 0 15px 0; font-size: 14px; color: #7ee787;
+        }
+        .ref-modal-content .ref-category {
+            color: #64748b; font-size: 10px; margin-bottom: 10px;
+        }
+        .ref-modal-content .ref-text {
+            background: rgba(74, 222, 128, 0.05); padding: 10px; border-left: 2px solid #4ade80;
+            margin: 10px 0; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;
+        }
+        .ref-modal-content .ref-actions {
+            display: flex; gap: 10px; margin-top: 15px;
+        }
+        .ref-modal-content a {
+            color: #4ade80; text-decoration: none; border: 1px solid #4ade80; padding: 6px 10px;
+            flex: 1; text-align: center; transition: 0.2s; cursor: pointer;
+        }
+        .ref-modal-content a:hover {
+            background: rgba(74, 222, 128, 0.2);
+        }
+        .ref-modal-content button {
+            background: rgba(0, 0, 0, 0.6); border: 1px solid #4ade80; color: #4ade80;
+            padding: 6px 10px; cursor: pointer; transition: 0.2s;
+        }
+        .ref-modal-content button:hover {
+            background: rgba(74, 222, 128, 0.2);
+        }
+
+        .result-item-wrapper {
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .result-ref-btn {
+            background: rgba(74, 222, 128, 0.1); border: 1px solid #4ade80; color: #4ade80;
+            padding: 2px 6px; font-size: 9px; cursor: pointer; white-space: nowrap;
+            transition: 0.2s; margin-left: 5px;
+        }
+        .result-ref-btn:hover {
+            background: rgba(74, 222, 128, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -73,12 +201,57 @@
         <h1>Project Golem // Active Retrieval</h1>
         <div id="status">SYSTEM READY</div>
         <div id="input-container">
-            <input type="text" id="query-input" placeholder="Query the cortex..." autocomplete="off">
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="query-input" placeholder="Query the cortex..." autocomplete="off" style="flex: 1;">
+                <button id="submit-btn" style="flex-shrink: 0;">↻ Enter/Pulse</button>
+            </div>
+            <div class="controls-row">
+                <select id="method-selector">
+                    <option value="cosine">Cosine Similarity</option>
+                    <option value="bm25">BM25 (Lexical)</option>
+                    <option value="cross_encoder">Cross-Encoder</option>
+                    <option value="hybrid">Hybrid (Fusion)</option>
+                </select>
+                <label>
+                    <input type="checkbox" id="show-connections" checked>
+                    Neural Connections
+                </label>
+            </div>
+            <div class="controls-row" style="margin-top: 5px;">
+                <label>
+                    <input type="checkbox" id="show-query-marker" checked>
+                    Query Marker
+                </label>
+                <label>
+                    <input type="checkbox" id="show-selected-marker" checked>
+                    Selected Marker
+                </label>
+            </div>
+            <div class="spin-control" style="margin-top: 8px;">
+                <label for="spin-slider" style="margin: 0;">Spin:</label>
+                <input type="range" id="spin-slider" min="0" max="2" step="0.1" value="0.5">
+                <span class="spin-value" id="spin-value">0.5x</span>
+            </div>
         </div>
         <div id="log"></div>
+        <div id="results-list"></div>
     </div>
 
     <div id="legend-container"></div>
+    <div id="inspect-panel"></div>
+
+    <!-- Reference Modal -->
+    <div id="ref-modal">
+        <div class="ref-modal-content">
+            <h2 id="ref-title"></h2>
+            <div class="ref-category" id="ref-category"></div>
+            <div class="ref-text" id="ref-text"></div>
+            <div class="ref-actions">
+                <a id="ref-wikipedia" target="_blank">Wikipedia</a>
+                <button id="ref-close">Close</button>
+            </div>
+        </div>
+    </div>
 
     <script type="importmap">
         { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
@@ -98,7 +271,16 @@
         document.body.appendChild(renderer.domElement);
 
         const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 0.5;
+        controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 0.2;
+
+        // Spin speed slider control
+        const spinSlider = document.getElementById('spin-slider');
+        const spinValue = document.getElementById('spin-value');
+        spinSlider.addEventListener('input', (e) => {
+            const speed = parseFloat(e.target.value);
+            controls.autoRotateSpeed = speed;
+            spinValue.textContent = (speed * 2).toFixed(1) + 'x';
+        });
 
         let pointsMesh, geometry;
         let nodes = [];
@@ -110,6 +292,7 @@
                 attribute vec3 color;
                 attribute float activationTime;
                 attribute float hidden;
+                attribute float methodType;
                 varying vec3 vColor;
                 varying float vAlpha;
                 uniform float uTime;
@@ -128,7 +311,17 @@
                     }
 
                     gl_Position = projectionMatrix * mvPosition;
-                    vColor = mix(color, vec3(1.0, 1.0, 1.0), intensity);
+
+                    // Color by method if methodType > 0.5
+                    vec3 baseColor = color;
+                    if (methodType > 0.5) {
+                        if (methodType < 1.5) baseColor = vec3(0.0, 1.0, 1.0);       // Cyan = Cosine
+                        else if (methodType < 2.5) baseColor = vec3(1.0, 1.0, 0.0); // Yellow = BM25
+                        else if (methodType < 3.5) baseColor = vec3(1.0, 0.0, 1.0); // Magenta = Cross-encoder
+                        else baseColor = vec3(1.0, 1.0, 1.0);                        // White = Tie/Hybrid
+                    }
+
+                    vColor = mix(baseColor, vec3(1.0, 1.0, 1.0), intensity);
                     vAlpha = 0.4 + (intensity * 0.6);
                 }
             `,
@@ -147,6 +340,7 @@
         // --- LOAD DATA & BUILD LEGEND ---
         const hiddenCategories = new Set();
         let hiddenAttribute;
+        let methodTypeAttribute;
 
         fetch('./golem_cortex.json')
             .then(res => res.json())
@@ -156,6 +350,7 @@
                 const colors = [];
                 const activationTimes = [];
                 const hidden = [];
+                const methodType = [];
 
                 // Map for Legend (Unique Categories)
                 const categoryMap = new Map();
@@ -165,6 +360,7 @@
                     colors.push(n.col[0], n.col[1], n.col[2]);
                     activationTimes.push(-100.0);
                     hidden.push(0.0); // Start with all visible
+                    methodType.push(0.0); // Start with no method coloring
 
                     // Capture unique category and its color for the legend
                     if (!categoryMap.has(n.cat)) {
@@ -220,32 +416,267 @@
                 hiddenAttribute.setUsage(THREE.DynamicDrawUsage);
                 geometry.setAttribute('hidden', hiddenAttribute);
 
+                methodTypeAttribute = new THREE.Float32BufferAttribute(methodType, 1);
+                methodTypeAttribute.setUsage(THREE.DynamicDrawUsage);
+                geometry.setAttribute('methodType', methodTypeAttribute);
+
                 pointsMesh = new THREE.Points(geometry, material);
                 scene.add(pointsMesh);
 
+                // Build KNN line segments
+                const linePositions = [];
+                const lineColors = [];
+
+                data.forEach((node, idx) => {
+                    if (hiddenCategories.has(node.cat)) return;
+
+                    const [x1, y1, z1] = node.pos.map(v => v * 8);
+                    node.nbs.forEach(nbIdx => {
+                        const nb = data[nbIdx];
+                        const [x2, y2, z2] = nb.pos.map(v => v * 8);
+
+                        linePositions.push(x1, y1, z1, x2, y2, z2);
+                        lineColors.push(...node.col, ...nb.col);
+                    });
+                });
+
+                const lineGeometry = new THREE.BufferGeometry();
+                lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+                lineGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
+
+                const lineMaterial = new THREE.LineBasicMaterial({
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.15,
+                    blending: THREE.AdditiveBlending
+                });
+
+                const linesMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
+                scene.add(linesMesh);
+
+                // Toggle lines visibility
+                document.getElementById('show-connections').addEventListener('change', (e) => {
+                    linesMesh.visible = e.target.checked;
+                });
+
                 document.getElementById('status').innerText = `CORTEX LOADED: ${data.length} NODES`;
             });
+
+        // --- RAYCASTER FOR CLICK DETECTION ---
+        const raycaster = new THREE.Raycaster();
+        raycaster.params.Points.threshold = 2;
+
+        renderer.domElement.addEventListener('click', (event) => {
+            const mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1
+            );
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObject(pointsMesh);
+
+            if (intersects.length > 0) {
+                const index = intersects[0].index;
+                showInspector(nodes[index]);
+            }
+        });
+
+        function showInspector(node) {
+            const panel = document.getElementById('inspect-panel');
+            let html = `<h3>${node.title}</h3>
+                        <div><strong>${node.cat}</strong></div><hr>
+                        <strong>Nearest Neighbors:</strong><ul style="margin:5px 0;padding:0;list-style:none;">`;
+
+            node.nbs.forEach(nbIdx => {
+                const nb = nodes[nbIdx];
+                html += `<li class="neighbor-item">${nb.title}</li>`;
+            });
+
+            html += `</ul><hr><button id="close-inspector-btn" style="background:#4ade80;color:#000;border:none;padding:5px 10px;cursor:pointer;font-size:11px;margin-top:10px;width:100%;">Close</button>`;
+            panel.innerHTML = html;
+            panel.style.display = 'block';
+
+            // Attach event listener to neighbor items
+            panel.querySelectorAll('.neighbor-item').forEach((item, idx) => {
+                item.addEventListener('click', () => {
+                    focusNode(node.nbs[idx]);
+                });
+            });
+
+            // Attach event listener to close button
+            document.getElementById('close-inspector-btn').addEventListener('click', closeInspector);
+        }
+
+        function closeInspector() {
+            document.getElementById('inspect-panel').style.display = 'none';
+        }
+
+        function focusNode(idx) {
+            const node = nodes[idx];
+            const pos = new THREE.Vector3(node.pos[0]*8, node.pos[1]*8, node.pos[2]*8);
+            controls.target.copy(pos);
+            renderSelectedMarker(idx);
+        }
+
+        // --- QUERY MARKER ---
+        let queryMarker = null;
+
+        function renderQueryMarker(position3d) {
+            if (queryMarker) scene.remove(queryMarker);
+            if (!position3d) return;
+
+            // Store the position for toggling visibility
+            lastQueryPosition = position3d;
+
+            if (!queryMarkerVisible) return;
+
+            const geometry = new THREE.SphereGeometry(3, 16, 16);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0xff0000,
+                transparent: true,
+                opacity: 0.7,
+                wireframe: true
+            });
+
+            queryMarker = new THREE.Mesh(geometry, material);
+            queryMarker.position.set(position3d[0]*8, position3d[1]*8, position3d[2]*8);
+            scene.add(queryMarker);
+
+            // Animate pulsing
+            const animate = () => {
+                if (!queryMarker) return;
+                queryMarker.scale.setScalar(1 + Math.sin(Date.now() * 0.003) * 0.2);
+                requestAnimationFrame(animate);
+            };
+            animate();
+        }
+
+        // --- SELECTED NODE MARKER ---
+        let selectedMarker = null;
+
+        function renderSelectedMarker(nodeIdx) {
+            if (selectedMarker) scene.remove(selectedMarker);
+
+            // Store the node index for toggling visibility
+            lastSelectedNodeIdx = nodeIdx;
+
+            if (!selectedMarkerVisible) return;
+
+            const node = nodes[nodeIdx];
+            const position3d = node.pos;
+
+            // Create octahedron wireframe in cyan/green
+            const geometry = new THREE.OctahedronGeometry(4);
+            const material = new THREE.LineBasicMaterial({
+                color: 0x00ffff,
+                linewidth: 2,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const edges = new THREE.EdgesGeometry(geometry);
+            selectedMarker = new THREE.LineSegments(edges, material);
+            selectedMarker.position.set(position3d[0]*8, position3d[1]*8, position3d[2]*8);
+            scene.add(selectedMarker);
+
+            // Slow rotation animation
+            const animateRotation = () => {
+                if (!selectedMarker) return;
+                selectedMarker.rotation.x += 0.003;
+                selectedMarker.rotation.y += 0.005;
+                requestAnimationFrame(animateRotation);
+            };
+            animateRotation();
+        }
+
+        function clearSelectedMarker() {
+            if (selectedMarker) {
+                scene.remove(selectedMarker);
+                selectedMarker = null;
+            }
+        }
+
+        // --- MARKER VISIBILITY TOGGLES ---
+        let queryMarkerVisible = true;
+        let selectedMarkerVisible = true;
+        let lastQueryPosition = null;
+        let lastSelectedNodeIdx = null;
+
+        function setQueryMarkerVisibility(visible) {
+            queryMarkerVisible = visible;
+            if (!visible && queryMarker) {
+                scene.remove(queryMarker);
+                queryMarker = null;
+            } else if (visible && lastQueryPosition && !queryMarker) {
+                renderQueryMarker(lastQueryPosition);
+            }
+        }
+
+        function setSelectedMarkerVisibility(visible) {
+            selectedMarkerVisible = visible;
+            if (!visible && selectedMarker) {
+                scene.remove(selectedMarker);
+                selectedMarker = null;
+            } else if (visible && lastSelectedNodeIdx !== null && !selectedMarker) {
+                renderSelectedMarker(lastSelectedNodeIdx);
+            }
+        }
+
+        // Add event listeners for marker visibility checkboxes
+        document.getElementById('show-query-marker').addEventListener('change', (e) => {
+            setQueryMarkerVisibility(e.target.checked);
+        });
+
+        document.getElementById('show-selected-marker').addEventListener('change', (e) => {
+            setSelectedMarkerVisibility(e.target.checked);
+        });
 
         // --- QUERY LOGIC ---
         const input = document.getElementById('query-input');
         const status = document.getElementById('status');
         const log = document.getElementById('log');
+        const methodSelector = document.getElementById('method-selector');
+        const submitBtn = document.getElementById('submit-btn');
+
+        // Store current results for the pulse button
+        let currentResultIndices = [];
+
+        // Submit button - refreshes pulse animation
+        submitBtn.addEventListener('click', () => {
+            if (currentResultIndices.length > 0) {
+                triggerMultiPulse(currentResultIndices);
+            }
+        });
 
         input.addEventListener('keydown', async (e) => {
             if (e.key === 'Enter') {
                 const query = input.value;
+                const method = methodSelector.value;
                 status.innerText = "VECTORIZING QUERY...";
+                closeInspector();
 
                 const response = await fetch('/query', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query })
+                    body: JSON.stringify({ query: query, method: method })
                 });
 
                 const result = await response.json();
-                status.innerText = `RETRIEVAL COMPLETE. FOUND ${result.indices.length} CONTEXTS.`;
+                status.innerText = `RETRIEVAL COMPLETE. FOUND ${result.indices.length} CONTEXTS. [${method}]`;
+
+                // Store results for pulse button
+                currentResultIndices = result.indices;
 
                 triggerMultiPulse(result.indices);
+
+                // Update method coloring
+                updateMethodColoring(result.method_breakdown);
+
+                // Render query marker
+                renderQueryMarker(result.query_position);
+
+                // Display results list
+                displayResultsList(result.indices, result.scores, method);
 
                 if(result.indices.length > 0) {
                     const topNode = nodes[result.indices[0]];
@@ -262,6 +693,99 @@
             });
             geometry.attributes.activationTime.needsUpdate = true;
         }
+
+        function updateMethodColoring(methodBreakdown) {
+            const methodTypeArray = methodTypeAttribute.array;
+            methodTypeArray.fill(0); // Reset all
+
+            for (const idxStr in methodBreakdown) {
+                const idx = parseInt(idxStr);
+                const best = methodBreakdown[idxStr].best;
+                // 1 = cosine, 2 = bm25, 3 = cross_encoder, 4 = tie
+                if (best === 'cosine') methodTypeArray[idx] = 1.0;
+                else if (best === 'bm25') methodTypeArray[idx] = 2.0;
+                else if (best === 'cross_encoder') methodTypeArray[idx] = 3.0;
+                else methodTypeArray[idx] = 4.0;
+            }
+
+            methodTypeAttribute.needsUpdate = true;
+        }
+
+        function displayResultsList(indices, scores, method) {
+            const resultsList = document.getElementById('results-list');
+            resultsList.classList.add('active');
+
+            let html = '<strong>Top Results:</strong>';
+
+            indices.forEach((idx, rank) => {
+                const node = nodes[idx];
+                const score = scores[rank];
+
+                // Format score based on method
+                let scoreLabel = '';
+                if (method === 'cosine' || method === 'hybrid') {
+                    scoreLabel = `(${(score * 100).toFixed(1)}%)`;
+                } else if (method === 'bm25') {
+                    scoreLabel = `(${score.toFixed(2)})`;
+                } else if (method === 'cross_encoder') {
+                    scoreLabel = `(${(score * 100).toFixed(0)}%)`;
+                }
+
+                html += `<div class="result-item-wrapper"><div class="result-item" style="flex:1;">${rank + 1}. ${node.title}<span class="result-score">${scoreLabel}</span></div><button class="result-ref-btn" data-idx="${idx}">ref</button></div>`;
+            });
+
+            resultsList.innerHTML = html;
+
+            // Add click listeners to results (for focusing/drill-down)
+            resultsList.querySelectorAll('.result-item').forEach((item, idx) => {
+                item.addEventListener('click', () => {
+                    focusNode(indices[idx]);
+                });
+            });
+
+            // Add click listeners to ref buttons
+            resultsList.querySelectorAll('.result-ref-btn').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent triggering the focusNode
+                    const idx = parseInt(btn.getAttribute('data-idx'));
+                    showReference(idx);
+                });
+            });
+        }
+
+        function showReference(nodeIdx) {
+            const node = nodes[nodeIdx];
+            document.getElementById('ref-title').textContent = node.title;
+            document.getElementById('ref-category').textContent = `Category: ${node.cat}`;
+            document.getElementById('ref-text').textContent = node.text;
+
+            // Construct Wikipedia URL
+            const wikiUrl = `https://en.wikipedia.org/wiki/${node.title.replace(/\s+/g, '_')}`;
+            document.getElementById('ref-wikipedia').href = wikiUrl;
+
+            document.getElementById('ref-modal').classList.add('active');
+        }
+
+        function closeReference() {
+            document.getElementById('ref-modal').classList.remove('active');
+        }
+
+        // Reference modal close button
+        document.getElementById('ref-close').addEventListener('click', closeReference);
+
+        // Close modal when clicking outside the content
+        document.getElementById('ref-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'ref-modal') {
+                closeReference();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeReference();
+            }
+        });
 
         // Animation Loop
         function animate() {

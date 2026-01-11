@@ -8,3 +8,5 @@ umap-learn
 scikit-learn
 numpy
 torch
+rank-bm25
+nltk
