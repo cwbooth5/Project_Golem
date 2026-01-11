@@ -43,7 +43,7 @@
             color: #64748b; font-size: 9px; margin-left: 5px;
         }
 
-        /* --- NEW: DATA LEGEND --- */
+        /* --- NEW: DATA LEGEND & MARKER LEGEND --- */
         #legend-container {
             position: absolute;
             bottom: 20px;
@@ -80,6 +80,40 @@
             height: 8px;
             border-radius: 50%;
             box-shadow: 0 0 5px currentColor; /* Glowing effect */
+        }
+
+        /* --- MARKER LEGEND --- */
+        #marker-legend-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #4ade80;
+            padding: 12px;
+            border-radius: 4px;
+            pointer-events: none;
+            font-size: 10px;
+            color: #4ade80;
+            max-width: 180px;
+        }
+        .marker-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 10px;
+        }
+        .marker-legend-item:last-child {
+            margin-bottom: 0;
+        }
+        .marker-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
         }
 
         /* --- CONTROLS --- */
@@ -209,6 +243,15 @@
                 bottom: 10px;
                 right: 10px;
             }
+            #marker-legend-container {
+                bottom: 10px;
+                left: 10px;
+                padding: 10px;
+                font-size: 9px;
+            }
+            .marker-legend-item {
+                margin-bottom: 6px;
+            }
             .legend-item {
                 font-size: 9px;
                 gap: 6px;
@@ -320,6 +363,19 @@
             /* Hide legend on small screens */
             #legend-container {
                 display: none;
+            }
+
+            /* Marker legend responsive */
+            #marker-legend-container {
+                bottom: 10px;
+                left: 10px;
+                padding: 10px;
+                font-size: 9px;
+                max-width: 160px;
+            }
+            .marker-legend-item {
+                margin-bottom: 6px;
+                gap: 6px;
             }
 
             /* Inspector panel repositioned */
@@ -496,6 +552,18 @@
             #results-list.mobile-open {
                 display: block !important;
             }
+
+            /* Marker legend on tiny screens */
+            #marker-legend-container {
+                bottom: 8px;
+                left: 8px;
+                padding: 8px;
+                font-size: 8px;
+                max-width: 140px;
+            }
+            .marker-legend-item {
+                margin-bottom: 4px;
+            }
         }
     </style>
 </head>
@@ -542,6 +610,7 @@
         <div id="results-list"></div>
     </div>
 
+    <div id="marker-legend-container"></div>
     <div id="legend-container"></div>
     <div id="inspect-panel"></div>
 
@@ -797,11 +866,55 @@
                 document.getElementById('status').innerText = `CORTEX LOADED: ${data.length} NODES`;
             });
 
-        // --- RAYCASTER FOR CLICK DETECTION ---
+        // --- MARKER LEGEND ---
+        function initializeMarkerLegend() {
+            const markerLegendContainer = document.getElementById('marker-legend-container');
+            markerLegendContainer.innerHTML = `
+                <div class="marker-legend-item">
+                    <div class="marker-icon">🔴</div>
+                    <span><strong>Query:</strong> Beacon (tap)</span>
+                </div>
+                <div class="marker-legend-item">
+                    <div class="marker-icon">🔷</div>
+                    <span><strong>Selected:</strong> Octahedron</span>
+                </div>
+                <div style="margin-top: 8px; font-size: 9px; color: #64748b; border-top: 1px solid #4ade80; padding-top: 8px;">
+                    Tap nodes to inspect
+                </div>
+            `;
+        }
+
+        // Initialize marker legend when page loads
+        window.addEventListener('load', initializeMarkerLegend);
+        // Also initialize immediately in case page is already loaded
+        if (document.readyState === 'complete') {
+            initializeMarkerLegend();
+        }
+
+        // --- RAYCASTER FOR CLICK DETECTION (BARE TAP ONLY, NOT PANS) ---
         const raycaster = new THREE.Raycaster();
         raycaster.params.Points.threshold = 2;
 
+        // Track mouse position for distinguishing taps from pans
+        let mouseDownX = 0, mouseDownY = 0;
+        const TAP_THRESHOLD = 5; // pixels - movement beyond this = pan, not tap
+
+        renderer.domElement.addEventListener('mousedown', (event) => {
+            mouseDownX = event.clientX;
+            mouseDownY = event.clientY;
+        });
+
         renderer.domElement.addEventListener('click', (event) => {
+            // Only select if mouse moved less than threshold (bare tap)
+            const moveDistance = Math.sqrt(
+                Math.pow(event.clientX - mouseDownX, 2) +
+                Math.pow(event.clientY - mouseDownY, 2)
+            );
+
+            if (moveDistance > TAP_THRESHOLD) {
+                return; // User was panning, not tapping
+            }
+
             const mouse = new THREE.Vector2(
                 (event.clientX / window.innerWidth) * 2 - 1,
                 -(event.clientY / window.innerHeight) * 2 + 1
@@ -855,21 +968,29 @@
 
         // --- QUERY MARKER ---
         let queryMarker = null;
+        let queryMarkerAnimationId = null;
 
         function renderQueryMarker(position3d) {
             if (queryMarker) scene.remove(queryMarker);
             if (!position3d) return;
+
+            // Cancel any existing beacon animation
+            if (queryMarkerAnimationId !== null) {
+                cancelAnimationFrame(queryMarkerAnimationId);
+                queryMarkerAnimationId = null;
+            }
 
             // Store the position for toggling visibility
             lastQueryPosition = position3d;
 
             if (!queryMarkerVisible) return;
 
-            const geometry = new THREE.SphereGeometry(3, 16, 16);
+            // Create smaller main sphere
+            const geometry = new THREE.SphereGeometry(1.5, 16, 16);
             const material = new THREE.MeshBasicMaterial({
                 color: 0xff0000,
                 transparent: true,
-                opacity: 0.7,
+                opacity: 0.8,
                 wireframe: true
             });
 
@@ -877,13 +998,68 @@
             queryMarker.position.set(position3d[0]*8, position3d[1]*8, position3d[2]*8);
             scene.add(queryMarker);
 
-            // Animate pulsing
-            const animate = () => {
-                if (!queryMarker) return;
-                queryMarker.scale.setScalar(1 + Math.sin(Date.now() * 0.003) * 0.2);
-                requestAnimationFrame(animate);
+            // Beacon animation parameters
+            const beaconInterval = 3000; // ms between beacon spawns
+            const beaconDuration = 1000; // ms for beacon to expand and fade
+            let lastBeaconTime = 0;
+
+            // Function to spawn a single expanding/fading beacon ring
+            const spawnBeacon = () => {
+                const beaconGeometry = new THREE.SphereGeometry(1.5, 16, 16);
+                const beaconMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xff0000,
+                    transparent: true,
+                    opacity: 0.6,
+                    wireframe: true
+                });
+                const beacon = new THREE.Mesh(beaconGeometry, beaconMaterial);
+                beacon.position.copy(queryMarker.position);
+                scene.add(beacon);
+
+                const startTime = Date.now();
+                const startScale = 1;
+                const maxScale = 1.5;
+
+                const animateBeacon = () => {
+                    if (!beacon || !scene) return;
+
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / beaconDuration, 1);
+
+                    // Expand outward
+                    const scale = startScale + (maxScale - startScale) * progress;
+                    beacon.scale.setScalar(scale);
+
+                    // Fade out as it expands
+                    beacon.material.opacity = 0.6 * (1 - progress);
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animateBeacon);
+                    } else {
+                        // Remove beacon when animation completes
+                        scene.remove(beacon);
+                        beacon.geometry.dispose();
+                        beacon.material.dispose();
+                    }
+                };
+
+                animateBeacon();
             };
-            animate();
+
+            // Beacon spawning loop
+            const spawnBeaconLoop = () => {
+                if (!queryMarker) return;
+
+                const now = Date.now();
+                if (now - lastBeaconTime >= beaconInterval) {
+                    spawnBeacon();
+                    lastBeaconTime = now;
+                }
+
+                queryMarkerAnimationId = requestAnimationFrame(spawnBeaconLoop);
+            };
+
+            queryMarkerAnimationId = requestAnimationFrame(spawnBeaconLoop);
         }
 
         // --- SELECTED NODE MARKER ---
@@ -953,6 +1129,11 @@
             if (!visible && queryMarker) {
                 scene.remove(queryMarker);
                 queryMarker = null;
+                // Cancel beacon animation
+                if (queryMarkerAnimationId !== null) {
+                    cancelAnimationFrame(queryMarkerAnimationId);
+                    queryMarkerAnimationId = null;
+                }
             } else if (visible && lastQueryPosition && !queryMarker) {
                 renderQueryMarker(lastQueryPosition);
             }
@@ -994,9 +1175,20 @@
         let currentResultIndices = [];
         let lastQueryText = '';
 
-        // Submit button - refreshes pulse animation
-        submitBtn.addEventListener('click', () => {
-            if (currentResultIndices.length > 0) {
+        // Submit button - executes new query or refreshes pulse animation
+        submitBtn.addEventListener('click', async () => {
+            const inputText = input.value.trim();
+            if (inputText.length === 0) {
+                return; // No query to execute
+            }
+
+            // If user entered new text, execute query
+            if (inputText !== lastQueryText) {
+                lastQueryText = inputText;
+                const method = methodSelector.value;
+                await executeQuery(inputText, method);
+            } else if (currentResultIndices.length > 0) {
+                // Otherwise, refresh pulse on existing results
                 triggerMultiPulse(currentResultIndices);
             }
         });
