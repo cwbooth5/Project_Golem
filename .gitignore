@@ -4,3 +4,5 @@ __pycache__/
 my_lancedb/
 .DS_Store
 .env
+*.pkl
+.python-version

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Golem: Active Matrix</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #050505; font-family: 'Courier New', monospace; }
@@ -193,11 +194,315 @@
         .result-ref-btn:hover {
             background: rgba(74, 222, 128, 0.3);
         }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            #ui-layer {
+                width: 280px;
+            }
+            #inspect-panel {
+                width: 260px;
+                top: 80px;
+                right: 10px;
+            }
+            #legend-container {
+                bottom: 10px;
+                right: 10px;
+            }
+            .legend-item {
+                font-size: 9px;
+                gap: 6px;
+            }
+            .legend-dot {
+                width: 6px;
+                height: 6px;
+            }
+            h1 {
+                font-size: 12px;
+            }
+            .controls-row {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            input[type="range"] {
+                width: 70px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #ui-layer {
+                width: 95vw;
+                max-width: 320px;
+                top: 10px;
+                left: 10px;
+                background: rgba(0, 0, 0, 0.8);
+                border: 1px solid #4ade80;
+                padding: 12px;
+                border-radius: 4px;
+            }
+            h1 {
+                font-size: 11px;
+                margin-bottom: 8px;
+            }
+            #status {
+                font-size: 9px;
+            }
+            #log {
+                font-size: 9px;
+                margin-top: 8px;
+            }
+            #input-container {
+                margin-top: 8px;
+            }
+            input[type="text"] {
+                padding: 8px;
+                font-size: 13px;
+            }
+            #submit-btn {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+            .controls-row {
+                flex-wrap: wrap;
+                gap: 6px;
+                margin-top: 6px !important;
+            }
+            select {
+                padding: 4px;
+                font-size: 10px;
+                flex: 0 1 100%;
+            }
+            label {
+                font-size: 10px;
+                gap: 4px;
+            }
+            input[type="checkbox"] {
+                width: 14px;
+                height: 14px;
+            }
+            .spin-control {
+                gap: 6px;
+                margin-top: 6px !important;
+                flex-wrap: wrap;
+            }
+            label[for="spin-slider"] {
+                margin: 0 !important;
+                flex: 0 1 100%;
+            }
+            input[type="range"] {
+                width: 90%;
+                height: 3px;
+            }
+            .spin-value {
+                min-width: 25px;
+            }
+            #results-list {
+                max-height: 150px;
+                font-size: 9px;
+                padding: 6px;
+                margin-top: 6px;
+            }
+            .result-item {
+                padding: 3px 0;
+            }
+            .result-score {
+                font-size: 8px;
+            }
+            .result-item-wrapper {
+                gap: 4px;
+            }
+            .result-ref-btn {
+                padding: 2px 4px;
+                font-size: 8px;
+                margin-left: 3px;
+            }
+
+            /* Hide legend on small screens */
+            #legend-container {
+                display: none;
+            }
+
+            /* Inspector panel repositioned */
+            #inspect-panel {
+                position: fixed;
+                top: auto;
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+                max-width: 90vw;
+                max-height: 40vh;
+                font-size: 10px;
+                padding: 10px;
+            }
+            #inspect-panel h3 {
+                font-size: 11px;
+            }
+            .neighbor-item {
+                padding: 4px;
+                margin: 2px 0;
+                font-size: 9px;
+            }
+
+            /* Modal responsive */
+            .ref-modal-content {
+                max-width: 90vw;
+                max-height: 80vh;
+                padding: 15px;
+                font-size: 10px;
+            }
+            .ref-modal-content h2 {
+                font-size: 12px;
+            }
+            .ref-modal-content .ref-text {
+                padding: 8px;
+                margin: 8px 0;
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #ui-layer {
+                width: 95vw;
+                max-width: 280px;
+                top: 8px;
+                left: 8px;
+                padding: 10px;
+            }
+            h1 {
+                font-size: 10px;
+                letter-spacing: 1px;
+                margin-bottom: 6px;
+            }
+            #status {
+                font-size: 8px;
+            }
+            #log {
+                font-size: 8px;
+                line-height: 1.3;
+                margin-top: 6px;
+            }
+            input[type="text"] {
+                padding: 6px;
+                font-size: 12px;
+            }
+            #submit-btn {
+                padding: 6px 8px;
+                font-size: 9px;
+            }
+            select {
+                padding: 3px;
+                font-size: 9px;
+            }
+            label {
+                font-size: 9px;
+            }
+            .controls-row {
+                gap: 4px;
+            }
+            .spin-control {
+                gap: 4px;
+                margin-top: 4px !important;
+            }
+            input[type="range"] {
+                width: 80%;
+                height: 2px;
+            }
+            #results-list {
+                max-height: 120px;
+                font-size: 8px;
+                padding: 5px;
+                margin-top: 4px;
+            }
+            .result-item {
+                padding: 2px 0;
+                font-size: 8px;
+            }
+            .result-ref-btn {
+                padding: 2px 3px;
+                font-size: 7px;
+                margin-left: 2px;
+            }
+
+            #inspect-panel {
+                bottom: 8px;
+                right: 8px;
+                left: 8px;
+                max-height: 35vh;
+                font-size: 9px;
+                padding: 8px;
+            }
+            #inspect-panel h3 {
+                font-size: 10px;
+                margin-bottom: 6px;
+            }
+            .neighbor-item {
+                padding: 3px;
+                margin: 1px 0;
+                font-size: 8px;
+            }
+
+            .ref-modal-content {
+                max-width: 95vw;
+                max-height: 85vh;
+                padding: 12px;
+                font-size: 9px;
+            }
+            .ref-modal-content h2 {
+                font-size: 11px;
+            }
+        }
+
+        /* Mobile menu toggle */
+        #menu-toggle {
+            display: none;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #4ade80;
+            color: #4ade80;
+            width: 30px;
+            height: 30px;
+            padding: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 25;
+        }
+        #menu-toggle:active {
+            background: rgba(74, 222, 128, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            #menu-toggle {
+                display: block;
+            }
+            #input-container {
+                display: none;
+                margin-top: 8px;
+            }
+            #input-container.mobile-open {
+                display: block;
+            }
+            #log {
+                display: none;
+            }
+            #log.mobile-open {
+                display: block;
+            }
+            #results-list {
+                display: none !important;
+            }
+            #results-list.mobile-open {
+                display: block !important;
+            }
+        }
     </style>
 </head>
 <body>
 
     <div id="ui-layer">
+        <button id="menu-toggle">☰</button>
         <h1>Project Golem // Active Retrieval</h1>
         <div id="status">SYSTEM READY</div>
         <div id="input-container">
@@ -272,6 +577,21 @@
 
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 0.2;
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const inputContainer = document.getElementById('input-container');
+        const logElement = document.getElementById('log');
+        const resultsList = document.getElementById('results-list');
+        let menuOpen = false;
+
+        menuToggle.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            inputContainer.classList.toggle('mobile-open', menuOpen);
+            logElement.classList.toggle('mobile-open', menuOpen);
+            resultsList.classList.toggle('mobile-open', menuOpen);
+            menuToggle.textContent = menuOpen ? '✕' : '☰';
+        });
 
         // Spin speed slider control
         const spinSlider = document.getElementById('spin-slider');
